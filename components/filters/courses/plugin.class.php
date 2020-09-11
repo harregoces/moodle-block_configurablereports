@@ -39,7 +39,7 @@ class plugin_courses extends plugin_base{
 
     public function execute($finalelements, $data) {
 
-        $filtercourses = optional_param('filter_courses', 0, PARAM_INT);
+        $filtercourses = optional_param('filter_courses', 0, PARAM_RAW);
         if (!$filtercourses) {
             return $finalelements;
         }
@@ -48,7 +48,7 @@ class plugin_courses extends plugin_base{
             return array($filtercourses);
         } else {
             if (preg_match("/%%FILTER_COURSES:([^%]+)%%/i", $finalelements, $output)) {
-                $replace = ' AND '.$output[1].' = '.$filtercourses;
+                $replace = ' AND '.$output[1].' IN ('.$filtercourses.') ';
                 return str_replace('%%FILTER_COURSES:'.$output[1].'%%', $replace, $finalelements);
             }
         }
@@ -84,7 +84,7 @@ class plugin_courses extends plugin_base{
             }
         }
 
-        $mform->addElement('select', 'filter_courses', get_string('course'), $courseoptions);
+        $mform->addElement('select', 'filter_courses', get_string('course'), $courseoptions)->setMultiple(true);
         $mform->setType('filter_courses', PARAM_INT);
     }
 }
